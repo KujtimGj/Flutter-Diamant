@@ -1,13 +1,12 @@
-import 'dart:convert';
 import 'dart:developer';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:warcash/const.dart';
-import 'package:http/http.dart' as http;
-import 'package:warcash/home/admin/admin.dart';
-import 'package:warcash/home/staff/staff.dart';
-
+import 'package:warcash/features/model/staffModel.dart';
+import 'package:warcash/features/presentation/staff/staff.dart';
+import 'package:warcash/features/providers/StaffAuthProviders/staffAuth.dart';
+import 'package:provider/provider.dart';
 class LoginStaff extends StatefulWidget {
   const LoginStaff({Key? key}) : super(key: key);
 
@@ -21,119 +20,26 @@ class _LoginStaffState extends State<LoginStaff> {
   String secretKey = 'K0s0v@r3Publik';
 
   DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+  String? uuid;
 
-  Future<void> loginStaff(context) async {
-    var headers = {'Content-Type': 'application/json'};
-    try {
-      var uri = Uri.parse("https://testdiamondapi.onrender.com/staff/login");
-      var res = await http
-          .post(
-            uri,
-            headers: headers,
-            body: jsonEncode(<String, String>{
-              'email': _email.text,
-              'password': _password.text
-            }),
-          )
-          .timeout(const Duration(
-              seconds: 10)); // Set an appropriate timeout duration
-      var resBody = jsonDecode(res.body);
-      SharedPreferences localStorage = await SharedPreferences.getInstance();
-      if (res.statusCode == 200) {
-        print("status code 200 accepted");
-        if (resBody['token'] != "" && resBody['token'] != null) {
-          log(resBody['token']);
-          localStorage.setString("token", resBody['token']);
-          localStorage.setString("id", resBody['staff']['_id']);
-          localStorage.setBool("isLoggedIn", true);
-          localStorage.setString("userName", resBody['staff']['userName']);
-          localStorage.setInt("credit", resBody['staff']['credit']);
-          localStorage.setInt("role", resBody['staff']['role']);
-          if (resBody['staff']['role'] == 2) {
-            print("role 2");
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (_) => const Staff()),
-              (route) => false,
-            );
-      }
-    }}else{
-        print(res.statusCode);
-      }
-      } catch (e) {
-      print("Error during login: $e");
-      showErrorMessage(context, "Error during login. Please try again.");
+  loginStaff(StaffAuthProvider staffProvider)async{
+    String email = _email.text.trim();
+    String password = _password.text.trim();
+
+    StaffModel? staffModel = await staffProvider.login(email, password);
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if(staffModel != null){
+      print(staffModel);
+      Navigator.push(context, MaterialPageRoute(builder: (_)=>const Staff()));
+      setState(() {
+        uuid=prefs.getString("uuid");
+      });
+    }else{
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Login failed. Please check your credentials'),backgroundColor: Colors.red,)
+      );
     }
-  }
-  Future<void> loginAdmin (context) async {
-    var headers = {'Content-Type': 'application/json'};
-    try {
-      var uri = Uri.parse("https://testdiamondapi.onrender.com/admin/login");
-      var res = await http
-          .post(
-        uri,
-        headers: headers,
-        body: jsonEncode(<String, String>{
-          'email': _email.text,
-          'password': _password.text
-        }),
-      )
-          .timeout(const Duration(
-          seconds: 10));
-      print(_email.text);
-      print(_password.text);
-      var resBody = jsonDecode(res.body);
-      SharedPreferences localStorage = await SharedPreferences.getInstance();
-      if (res.statusCode == 200) {
-        print("status code 200 accepted");
-        if (resBody['token'] != "" && resBody['token'] != null) {
-          log(resBody['token']);
-          localStorage.setString("token", resBody['token']);
-          localStorage.setString("id", resBody['admin']['_id']);
-          localStorage.setBool("isLoggedIn", true);
-          localStorage.setString("userName", resBody['admin']['userName']);
-          localStorage.setInt("credit", resBody['admin']['credit']);
-          localStorage.setInt("role", resBody['admin']['role']);
-
-          if (resBody['admin']['role'] == 1) {
-            print("role 1");
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (_) => const Admin()),
-                  (route) => false,
-            );
-          }
-        }}else{
-        print(res.statusCode);
-      }
-    } catch (e) {
-      print("Error during login: $e");
-      showErrorMessage(context, "Error during login. Please try again.");
-    }
-  }
-  void showErrorMessage(BuildContext context, String message) {
-    final snackBar = SnackBar(
-      content: Text(message),
-    );
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
-
-  void handleErrorResponse(BuildContext context, Map<String, dynamic> resBody) {
-    if (resBody['error'] == 'Incorrect email') {
-      showErrorMessage(context, 'Incorrect email');
-    } else if (resBody['error'] == 'Incorrect password') {
-      showErrorMessage(context, 'Incorrect password');
-    } else if (resBody['error'] == 'All fields must be filled!') {
-      showErrorMessage(context, 'Please fill all fields!');
-    } else if (resBody['error'] == 'Please type in your email!') {
-      showErrorMessage(context, 'Please type in your email!');
-    } else if (resBody['error'] == 'Please type in your password!') {
-      showErrorMessage(context, 'Please type in your password!');
-    } else {
-      showErrorMessage(context, 'Unexpected error occurred');
-    }
-
-    log(resBody.toString());
   }
 
   bool isObscure = true;
@@ -142,6 +48,7 @@ class _LoginStaffState extends State<LoginStaff> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    final staffProvider = Provider.of<StaffAuthProvider>(context);
     return Scaffold(
       backgroundColor: primaryWhite,
       body: SafeArea(
@@ -179,7 +86,7 @@ class _LoginStaffState extends State<LoginStaff> {
                           Container(
                             height: 3,
                             width: size.width * 0.17,
-                            color: isStaff?const Color(0xff1A7BC2):Colors.grey[400],
+                            color: isStaff?primaryBlue:Colors.grey[400],
                           )
                         ],
                       ),
@@ -280,9 +187,7 @@ class _LoginStaffState extends State<LoginStaff> {
               SizedBox(height: size.height * 0.06),
               GestureDetector(
                   onTap: () async {
-                    log("entry");
-                    await loginStaff(context);
-                    log("exit");
+                    await loginStaff(staffProvider);
                   },
                   child: Align(
                     alignment: Alignment.centerRight,

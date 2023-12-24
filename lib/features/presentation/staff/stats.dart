@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:warcash/home/staff/curvepaint.dart';
+import 'package:warcash/features/presentation/staff/curvepaint.dart';
 
 class Stats extends StatefulWidget {
   Stats({Key? key}) : super(key: key);

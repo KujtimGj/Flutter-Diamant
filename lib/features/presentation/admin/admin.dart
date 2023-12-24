@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:warcash/auth/login.dart';
-import 'package:warcash/home/admin/clients.dart';
-import 'package:warcash/home/admin/employees.dart';
-import 'package:warcash/home/admin/profile.dart';
-import 'package:warcash/home/client/client.dart';
+import 'package:warcash/features/presentation/auth/login.dart';
+import 'package:warcash/features/presentation/admin/clients.dart';
+import 'package:warcash/features/presentation/admin/employees.dart';
+import 'package:warcash/features/presentation/admin/profile.dart';
+import 'package:warcash/features/presentation/client/client.dart';
 
 class Admin extends StatefulWidget {
   const Admin({Key? key}) : super(key: key);

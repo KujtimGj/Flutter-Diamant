@@ -2,11 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:warcash/auth/login.dart';
-import 'package:warcash/home/staff/ballina.dart';
-import 'package:warcash/home/staff/historia.dart';
-import 'package:warcash/home/staff/stats.dart';
-import '../../const.dart';
+import 'package:warcash/features/presentation/auth/login.dart';
+import 'package:warcash/features/presentation/staff/ballina.dart';
+import 'package:warcash/features/presentation/staff/historia.dart';
+import 'package:warcash/features/presentation/staff/stats.dart';
+import '../../../const.dart';
 
 enum SelectedItem { ballina, statistikat, historia }
 

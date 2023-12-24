@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:warcash/auth/login.dart';
-import 'package:warcash/auth/loginstaff.dart';
+import 'package:warcash/features/presentation/auth/login.dart';
+import 'package:warcash/features/presentation/auth/loginstaff.dart';
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({Key? key}) : super(key: key);

@@ -3,7 +3,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:warcash/auth/login.dart';
+import 'package:warcash/features/presentation/auth/login.dart';
 import 'package:http/http.dart' as http;
 import 'package:warcash/const.dart';
 
@@ -148,7 +148,7 @@ class _HistoriaState extends State<Historia> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const Icon(Icons.account_circle_outlined,size: 35,color: primaryLight,),
+                  const Icon(Icons.account_circle_outlined,size: 35,color: primaryBlue,),
                   const SizedBox(width: 10),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,

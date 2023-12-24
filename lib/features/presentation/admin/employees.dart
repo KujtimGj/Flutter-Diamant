@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:warcash/model/userModel.dart';
+import 'package:warcash/features/model/userModel.dart';
 
 class Employees extends StatefulWidget {
   const Employees({Key? key}) : super(key: key);
@@ -58,6 +58,7 @@ class _EmployeesState extends State<Employees> {
       child:ListView.builder(
         shrinkWrap: true,
         itemCount: userStaff.length,
+        physics: const NeverScrollableScrollPhysics(),
         itemBuilder: (BuildContext context, int index){
           return Container(
             height: 80,

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:warcash/auth/login.dart';
+import 'package:warcash/features/presentation/auth/login.dart';
 
 enum SelectedItem { ballina, statistikat, profili }
 

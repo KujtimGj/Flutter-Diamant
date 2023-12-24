@@ -4,10 +4,10 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:warcash/const.dart';
-import 'package:warcash/home/admin/admin.dart';
-import 'package:warcash/home/client/client.dart';
+import 'package:warcash/features/presentation/admin/admin.dart';
+import 'package:warcash/features/presentation/client/client.dart';
 import 'package:http/http.dart' as http;
-import 'package:warcash/home/staff/staff.dart';
+import 'package:warcash/features/presentation/staff/staff.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
