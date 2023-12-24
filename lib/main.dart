@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:warcash/auth/login.dart';
+import 'package:warcash/auth/splashscreen.dart';
 import 'package:warcash/home/admin/admin.dart';
 import 'package:warcash/home/client/client.dart';
 import 'package:warcash/home/staff/staff.dart';
@@ -34,10 +35,10 @@ class _MyAppState extends State<MyApp> {
       }else if(widget.role==3){
         return const Client();
       }else{
-        return const Login();
+        return const SplashScreen();
       }
     } else {
-      return const Login();
+      return const SplashScreen();
     }
   }
 

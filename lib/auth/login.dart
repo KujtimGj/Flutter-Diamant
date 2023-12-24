@@ -4,6 +4,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:warcash/const.dart';
+import 'package:warcash/home/admin/admin.dart';
 import 'package:warcash/home/client/client.dart';
 import 'package:http/http.dart' as http;
 import 'package:warcash/home/staff/staff.dart';
@@ -22,76 +23,90 @@ class _LoginState extends State<Login> {
 
   DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
 
-  Future login(context) async {
-    var res = await http.post(Uri.parse("https://testdiamondapi.onrender.com/users/login"),
-        headers: <String, String>{
-          'Content-Type': 'application/json;charSet=UTF-8'
-        },
+  Future<void> login(context) async {
+    var headers={'Content-Type': 'application/json'};
+    try {
+      print("try");
+      var uri = Uri.parse("https://testdiamondapi.onrender.com/users/login");
+      var res = await http.post(
+        uri,
+        headers: headers,
         body: jsonEncode(<String, String>{
           'email': _email.text,
           'password': _password.text
-        }));
-    var resBody = jsonDecode(res.body);
-    SharedPreferences localStorage = await SharedPreferences.getInstance();
-    if (res.statusCode == 200) {
-      log("200");
-      if (resBody['token'] != "" && resBody['token'] != "") {
-        log("-");
-        log(resBody['token']);
-        log("-");
-        localStorage.setString("token", resBody['token']);
-        localStorage.setString("id",resBody['user']['_id']);
-        localStorage.setBool("isLoggedIn", true);
-        localStorage.setString("userName", resBody['user']!['userName']);
-        localStorage.setInt("credit", resBody['user']!['credit']);
-        localStorage.setInt("role", resBody['user']!['role']);
+        }),
+      ).timeout(Duration(seconds: 10)); // Set an appropriate timeout duration
 
-        if (resBody['user']['role'] == 2) {
-          Navigator.pushAndRemoveUntil(
+      print(uri);
+      print("try done");
+
+      var resBody = jsonDecode(res.body);
+      print(resBody);
+      SharedPreferences localStorage = await SharedPreferences.getInstance();
+
+      if (res.statusCode == 200) {
+        print("status code 200 accepted");
+        if (resBody['token'] != "" && resBody['token'] != null) {
+          log(resBody['token']);
+          localStorage.setString("token", resBody['token']);
+          localStorage.setString("id", resBody['user']['_id']);
+          localStorage.setBool("isLoggedIn", true);
+          localStorage.setString("userName", resBody['user']['userName']);
+          localStorage.setInt("credit", resBody['user']['credit']);
+          localStorage.setInt("role", resBody['user']['role']);
+          if(resBody['user']['role']==1){
+            print("role 1");
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_)=>const Admin()), (route) => false);
+          }
+          if (resBody['user']['role'] == 2) {
+            print("role 2");
+            Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (_) => const Staff()),
-              (route) => false);
-        } else if (resBody['user']['role'] == 3) {
-          Navigator.pushAndRemoveUntil(
+                  (route) => false,
+            );
+          } else if (resBody['user']['role'] == 3) {
+            Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (_) => const Client()),
-              (route) => false);
+                  (route) => false,
+            );
+          }
+        } else {
+          showErrorMessage(context, "Unexpected response from server");
         }
       } else {
-        log("ERROR");
+        handleErrorResponse(context, resBody);
       }
-    } else {
-      if (resBody['error'] == 'Incorrect email') {
-        const snackBar = SnackBar(
-          content: Text('Incorrect email'),
-        );
-
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      }
-      if (resBody['error'] == 'Incorrect password') {
-        const snackBar = SnackBar(
-          content: Text('Incorrect password'),
-        );
-
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      } else if (resBody['error'] == 'All fields must be filled!') {
-        const snackBar = SnackBar(
-          content: Text('Please fill all fields!'),
-        );
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      } else if (resBody['error'] == 'Please type in your email!') {
-        const snackBar = SnackBar(
-          content: Text('Please type in your email!'),
-        );
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      } else if (resBody['error'] == 'Please type in your password!') {
-        const snackBar = SnackBar(
-          content: Text('Please type in your password!'),
-        );
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      }
-      log(res.statusCode.toString());
+    } catch (e) {
+      print("Error during login: $e");
+      showErrorMessage(context, "Error during login. Please try again.");
     }
+  }
+
+  void showErrorMessage(BuildContext context, String message) {
+    final snackBar = SnackBar(
+      content: Text(message),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  void handleErrorResponse(BuildContext context, Map<String, dynamic> resBody) {
+    if (resBody['error'] == 'Incorrect email') {
+      showErrorMessage(context, 'Incorrect email');
+    } else if (resBody['error'] == 'Incorrect password') {
+      showErrorMessage(context, 'Incorrect password');
+    } else if (resBody['error'] == 'All fields must be filled!') {
+      showErrorMessage(context, 'Please fill all fields!');
+    } else if (resBody['error'] == 'Please type in your email!') {
+      showErrorMessage(context, 'Please type in your email!');
+    } else if (resBody['error'] == 'Please type in your password!') {
+      showErrorMessage(context, 'Please type in your password!');
+    } else {
+      showErrorMessage(context, 'Unexpected error occurred');
+    }
+
+    log(resBody.toString());
   }
 
   bool isObscure = true;
@@ -113,7 +128,7 @@ class _LoginState extends State<Login> {
                   children: [
                     const Text(
                       "Log in",
-                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600,color: Color(0xff1A7BC2)),
                     ),
                     SizedBox(
                       height: size.height*0.01,
@@ -121,21 +136,20 @@ class _LoginState extends State<Login> {
                     Container(
                       height: 3,
                       width: size.width*0.17,
-                      color: Colors.black87,
+                      color: Color(0xff1A7BC2),
                     )
                   ],
                 ),
               ),
-              SizedBox(height: size.height * 0.05),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: size.width*0.02),
-                child: const Text("Diamant",style: TextStyle(fontSize: 35,fontWeight: FontWeight.w500),),
+              SizedBox(height: size.height * 0.02),
+              Center(
+                child: SizedBox(
+                  height: size.height*0.35,
+                  width: size.width*0.8,
+                  child: Image.asset("assets/transparent_logo.png",fit: BoxFit.cover,),
+                ),
               ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: size.width*0.02),
-                child: Text("Auto Larje",style: TextStyle(fontSize: 20,color: Colors.grey[700]),),
-              ),
-              SizedBox(height: size.height*0.15),
+              SizedBox(height: size.height*0.05),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: size.width * 0.03),
                 child: TextFormField(
@@ -190,8 +204,10 @@ class _LoginState extends State<Login> {
 
               SizedBox(height: size.height * 0.06),
               GestureDetector(
-                  onTap: () {
-                    login(context);
+                  onTap: ()async {
+                    print("entry");
+                    await login(context);
+                    print("exit");
                   },
                   child: Align(
                     alignment: Alignment.centerRight,
@@ -199,7 +215,7 @@ class _LoginState extends State<Login> {
                         height: size.height * 0.075,
                         width: size.width*0.3,
                         decoration: BoxDecoration(
-                            color: Colors.amber,
+                            color: const Color(0xff1A7BC2),
                             borderRadius: BorderRadius.circular(15)),
                         margin: EdgeInsets.symmetric(horizontal: size.width * 0.04),
                         child: const Center(

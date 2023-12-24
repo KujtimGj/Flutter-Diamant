@@ -17,7 +17,8 @@ class User{
       phone: fromJson['phone'],
       role: fromJson['role'],
       credit: fromJson['credit'],
-      id: fromJson['_id']);
+    id: M.ObjectId.fromHexString(fromJson['_id']),
+  );
   }
 
 }

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:warcash/auth/login.dart';
 import 'package:http/http.dart' as http;
+import 'package:warcash/const.dart';
 
 import '../../model/completedServicesModel.dart';
 
@@ -54,7 +55,7 @@ class _HistoriaState extends State<Historia> {
     String? token = localStorage.getString('token');
     String? id = localStorage.getString('id');
     final response = await http.get(
-      Uri.parse("http://localhost:8000/completedservices/byStaff/$id"),
+      Uri.parse("https://testdiamondapi.onrender.com/completedservices/byStaff/$id"),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token'
@@ -62,10 +63,10 @@ class _HistoriaState extends State<Historia> {
     );
 
     if (response.statusCode == 200) {
-      var resBody = jsonDecode(response.body)['csbyStaffId'];
+      var resBody = jsonDecode(response.body);
       print(response.statusCode);
+      print(id);
       log(response.body);
-
           if(resBody != null){
             var services = resBody.map<CompletedServices>((json)=>CompletedServices.fromJson(json)).toList();
             setState(() {
@@ -137,17 +138,24 @@ class _HistoriaState extends State<Historia> {
             return Container(
               height: size.height*0.12,
               width: size.width,
-              margin:const EdgeInsets.all(10),
+              margin: EdgeInsets.symmetric(horizontal:size.width*0.05,vertical: size.height*0.01),
+              padding: EdgeInsets.symmetric(horizontal: size.width*0.025),
               decoration: BoxDecoration(
                 border: Border.all(width: 1,color: Colors.grey[400]!),
                 borderRadius: BorderRadius.circular(15)
               ),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  const Icon(Icons.account_circle_outlined,size: 35,color: primaryLight,),
+                  const SizedBox(width: 10),
                   Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(completedServices[index].ClientID),
-                      Text(completedServices[index].ServiceID),
+                      Text(completedServices[index].staff.userName,style:const TextStyle(fontSize: 18),),
+                      Text(completedServices[index].client.userName)
                     ],
                   )
                 ],

@@ -225,7 +225,7 @@ class _StaffState extends State<Staff> {
             ),
             Visibility(
               visible: selected == SelectedItem.statistikat,
-              child: const Stats(),
+              child:  Stats(),
             ),
             Visibility(
               visible: selected == SelectedItem.historia,
