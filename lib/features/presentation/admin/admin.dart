@@ -4,6 +4,7 @@ import 'package:warcash/features/presentation/auth/login.dart';
 import 'package:warcash/features/presentation/admin/clients.dart';
 import 'package:warcash/features/presentation/admin/employees.dart';
 import 'package:warcash/features/presentation/admin/profile.dart';
+import 'package:warcash/features/presentation/auth/splashscreen.dart';
 import 'package:warcash/features/presentation/client/client.dart';
 
 class Admin extends StatefulWidget {
@@ -21,8 +22,9 @@ class _AdminState extends State<Admin> {
     localStorage.setBool("isLoggedIn", false);
     localStorage.remove("userName");
     localStorage.remove("credit");
+    localStorage.remove("role");
     Navigator.pushAndRemoveUntil(
-        context, MaterialPageRoute(builder: (_) => Login()), (route) => false);
+        context, MaterialPageRoute(builder: (_) => SplashScreen()), (route) => false);
   }
 
 
@@ -58,7 +60,7 @@ class _AdminState extends State<Admin> {
                   height: 40,
                   width: 100,
                   decoration: BoxDecoration(
-                    color:selectedIndex==0?Color(0xff95cfd2):Colors.white,
+                    color:selectedIndex==0?const Color(0xff95cfd2):Colors.white,
                     borderRadius: BorderRadius.circular(15),
 
                   ),

@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:warcash/features/presentation/auth/login.dart';
+import 'package:warcash/features/presentation/auth/splashscreen.dart';
 import 'package:warcash/features/presentation/staff/ballina.dart';
 import 'package:warcash/features/presentation/staff/historia.dart';
 import 'package:warcash/features/presentation/staff/stats.dart';
-import '../../../const.dart';
+import '../../../core/consts/const.dart';
 
 enum SelectedItem { ballina, statistikat, historia }
 
@@ -51,7 +52,7 @@ class _StaffState extends State<Staff> {
     localStorage.remove('userName');
     localStorage.remove('credit');
     localStorage.remove('role');
-    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_)=>const Login()), (route) => false);
+    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_)=>const SplashScreen()), (route) => false);
 
   }
   void _showAlertDialog(BuildContext context) {
@@ -104,7 +105,7 @@ class _StaffState extends State<Staff> {
     return Scaffold(
       backgroundColor: primaryWhite,
       appBar: AppBar(
-        toolbarHeight: 120,
+        toolbarHeight: 100,
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: false,
@@ -143,7 +144,7 @@ class _StaffState extends State<Staff> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            const Divider(color: Colors.black),
+            const Divider(color: primaryBlue),
             SizedBox(height: size.height * 0.025),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: size.width * 0.05),
@@ -165,7 +166,7 @@ class _StaffState extends State<Staff> {
                             height: size.height * 0.02,
                             width: size.width * 0.02,
                             decoration: const BoxDecoration(
-                                color: Colors.amber, shape: BoxShape.circle),
+                                color: primaryBlue, shape: BoxShape.circle),
                           ),
                         )
                       ],
@@ -187,7 +188,7 @@ class _StaffState extends State<Staff> {
                             height: size.height * 0.02,
                             width: size.width * 0.02,
                             decoration: const BoxDecoration(
-                                color: Colors.amber, shape: BoxShape.circle),
+                                color: primaryBlue, shape: BoxShape.circle),
                           ),
                         )
                       ],
@@ -208,7 +209,7 @@ class _StaffState extends State<Staff> {
                             height: size.height * 0.02,
                             width: size.width * 0.02,
                             decoration: const BoxDecoration(
-                                color: Colors.amber, shape: BoxShape.circle),
+                                color: primaryBlue, shape: BoxShape.circle),
                           ),
                         )
                       ],

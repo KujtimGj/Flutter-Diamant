@@ -19,7 +19,8 @@ class StaffModel {
     required this.slotNr,
   });
 
-  factory StaffModel.fromJson(Map<String, dynamic> json) => StaffModel(
+  factory StaffModel.fromJson(Map<String, dynamic> json) {
+    return StaffModel(
     id: json["_id"],
     userName: json["userName"],
     email: json["email"],
@@ -28,10 +29,9 @@ class StaffModel {
     phone: json["phone"] as int? ?? 0,
     staffCredit: json["staffCredit"]as int? ?? 0,
     slotNr: json["slotNr"] as int? ?? 0,
-  );
+  );}
 
-  Map<String, dynamic> toJson() {
-    return {
+  Map<String, dynamic> toJson() =>{
       "_id": id,
     "userName": userName,
     "email": email,
@@ -41,5 +41,4 @@ class StaffModel {
     "staffCredit": staffCredit,
     "slotNr":slotNr,
   };
-  }
 }

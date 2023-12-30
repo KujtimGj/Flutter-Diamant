@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../core/consts/const.dart';
+
 class Ballina extends StatefulWidget {
   const Ballina({Key? key}) : super(key: key);
 
@@ -322,14 +324,14 @@ class _BallinaState extends State<Ballina> {
                         width: size.width*0.85,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
-                          color: Colors.amber
+                          color: primaryBlue
                         ),
                         child: const Center(
                           child: Text("Konfirmo larjen",style: TextStyle(color: Colors.white,fontSize: 18),),
                         ),
                       ),
                     ),
-                    SizedBox(height: size.height*0.2),
+                    SizedBox(height: size.height*0.05),
                   ],
                 )
               ],

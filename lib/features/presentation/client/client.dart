@@ -1,9 +1,10 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:warcash/core/consts/const.dart';
+import 'package:warcash/core/consts/dimensions.dart';
 import 'package:warcash/features/presentation/auth/login.dart';
+import 'package:warcash/features/presentation/auth/splashscreen.dart';
 
 enum SelectedItem { ballina, statistikat, profili }
 
@@ -65,9 +66,20 @@ class _ClientState extends State<Client> {
     localStorage.setBool("isLoggedIn", false);
     localStorage.remove("userName");
     localStorage.remove("credit");
+    localStorage.remove("role");
     Navigator.pushAndRemoveUntil(
-        context, MaterialPageRoute(builder: (_) => Login()), (route) => false);
+        context, MaterialPageRoute(builder: (_) => const SplashScreen()), (route) => false);
   }
+
+  List<dynamic> subscriptions=[
+    {"name": "Silver","points":50,"color":Colors.grey[500],'price':10,'features':['1 Tyre Cleaning','1 Details Car Wash','1 detailed cleaning']},
+    {"name": "Gold","points":70,"color":Colors.amber,'price':20,'features':['1 Tyre Cleaning','1 Details Car Wash','1 detailed cleaning']},
+    {"name": "VIP","points":100,"color":darkBlue,'price':30,'features':['1 Tyre Cleaning','1 Details Car Wash','1 detailed cleaning']},
+  ];
+
+  List<dynamic> services=[
+    {'type':'Exterior','icon':Icons.car_crash_outlined,'image':"assets/images/carwashing.jpg",'title':'Exterior wash','body':"Lorem ipsum"},
+  ];
 
   getUserData() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
@@ -86,56 +98,78 @@ class _ClientState extends State<Client> {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          toolbarHeight: 60,
+          toolbarHeight: 80,
           elevation: 0,
-          backgroundColor: Colors.blue,
-          centerTitle: true,
+          backgroundColor: Colors.white,
+          centerTitle: false,
+          automaticallyImplyLeading: false,
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "Mirë se vini",
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.black),
+              ),
+              Text(
+                name,
+                style: const TextStyle(color: primaryBlue),
+              )
+            ],
+          ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: GestureDetector(
+                  onTap: () {
+                    logout();
+                  },
+                  child: Icon(Icons.logout,
+                      color: primaryBlue.withOpacity(0.5), size: 35)),
+            )
+          ],
         ),
         body: ListView(
           children: [
             Container(
-              height: size.height * 0.17,
-              width: size.width,
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              decoration: const BoxDecoration(
-                  color: Colors.blue,
-                  borderRadius: BorderRadius.only(
-                      bottomRight: Radius.circular(10),
-                      bottomLeft: Radius.circular(10))),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "Miresevini",
-                            style: TextStyle(
-                                fontSize: 18,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w400),
-                          ),
-                          Text(
-                            name,
-                            style: const TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.white),
-                          ),
-                        ],
-                      ),
-                      GestureDetector(
-                          onTap: () {
-                            logout();
-                          },
-                          child: const Icon(Icons.logout,
-                              color: Colors.white, size: 30))
-                    ],
-                  ),
-                ],
+              height: getPhoneHeight(context) * 0.25,
+              width: getPhoneWidth(context) * 0.85,
+              margin: EdgeInsets.symmetric(
+                  horizontal: getPhoneWidth(context) * 0.035),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  image: DecorationImage(
+                    image: const AssetImage("assets/images/carwashing.jpg"),
+                    fit: BoxFit.cover,
+                    colorFilter: ColorFilter.mode(
+                      Colors.black.withOpacity(
+                          0.7), // Adjust color and opacity as needed
+                      BlendMode.overlay, // Adjust blend mode as needed
+                    ),
+                  )),
+              child: const Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Auto Larje",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 30,
+                          fontWeight: FontWeight.w600),
+                    ),
+                    Text(
+                      "Express",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 40,
+                          fontWeight: FontWeight.w600),
+                    )
+                  ],
+                ),
               ),
             ),
             const Padding(
@@ -146,121 +180,276 @@ class _ClientState extends State<Client> {
               ),
             ),
             SizedBox(
-              width: size.width,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        height: 70,
-                        width: 70,
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle, color: Colors.grey[200]),
-                        child: const Center(
-                          child: Icon(Icons.car_crash_outlined,color: Colors.blue,size: 30,),
+                width: size.width,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          height: 70,
+                          width: 70,
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle, color: Colors.grey[200]),
+                          child: const Center(
+                            child: Icon(
+                              Icons.car_crash_outlined,
+                              color: Colors.blue,
+                              size: 30,
+                            ),
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 10),
-                      const Text("Exterior")
-                    ],
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        height: 70,
-                        width: 70,
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle, color: Colors.grey[200]),
-                        child: const Center(
-                          child: Icon(Icons.car_crash_outlined,color: Colors.blue,size: 30,),
+                        const SizedBox(height: 10),
+                        const Text("Exterior")
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          height: 70,
+                          width: 70,
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle, color: Colors.grey[200]),
+                          child: Center(
+                              child: Image.asset(
+                            'assets/icons/car-seat.png',
+                            height: 30,
+                            color: primaryBlue,
+                          )),
                         ),
-                      ),
-                      const SizedBox(height: 10),
-                      const Text("Interior")
-                    ],
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        height: 70,
-                        width: 70,
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle, color: Colors.grey[200]),
-                        child: const Center(
-                          child: Icon(Icons.car_crash_outlined,color: Colors.blue,size: 30,),
+                        const SizedBox(height: 10),
+                        const Text("Interior")
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          height: 70,
+                          width: 70,
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle, color: Colors.grey[200]),
+                          child: Center(
+                              child: Image.asset(
+                            'assets/icons/detail-cleaning.png',
+                            color: primaryBlue,
+                          )),
                         ),
-                      ),
-                      const SizedBox(height: 10),
-                      const Text("Detailing")
-                    ],
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        height: 70,
-                        width: 70,
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle, color: Colors.grey[200]),
-                        child: const Center(
-                          child: Icon(Icons.car_crash_outlined,color: Colors.blue,size: 30,),
+                        const SizedBox(height: 10),
+                        const Text("Detailing")
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          height: 70,
+                          width: 70,
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle, color: Colors.grey[200]),
+                          child: Center(
+                              child: Image.asset(
+                                'assets/icons/vacuum-cleaner-.png',
+                                color: primaryBlue,
+                              )),
                         ),
-                      ),
-                      const SizedBox(height: 10),
-                      const Text("Vacuum")
-                    ],
-                  ),
-                ],
-              )
-            ),
-            SizedBox(height: size.height*0.05),
+                        const SizedBox(height: 10),
+                        const Text("Vacuum")
+                      ],
+                    ),
+                  ],
+                )),
+            SizedBox(height: size.height * 0.05),
             Container(
               margin: const EdgeInsets.all(10),
               height: size.height * 0.25,
               width: size.width * 0.9,
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10), color: Colors.blue),
-              padding: const EdgeInsets.all(20),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                  borderRadius: BorderRadius.circular(10), color: darkBlue),
+              child: Stack(
+                children: [
+                  Positioned(
+                    top:-20,
+                    left: -20,
+                    child: Container(
+                      height:70,
+                      width: 70,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white.withOpacity(0.1)
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top:-20,
+                    right: -20,
+                    child: Container(
+                      height:100,
+                      width: 100,
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white.withOpacity(0.1)
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding:  EdgeInsets.symmetric(horizontal:getPhoneWidth(context)*0.05),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          "Kreditë: ",
-                          style:
-                              TextStyle(fontSize: 15, color: Colors.white),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Kreditë: ",
+                              style: TextStyle(fontSize: 15, color: Colors.white),
+                            ),
+                            Text(
+                              "24.00$credit",
+                              style: const TextStyle(
+                                  fontSize: 20, color: Colors.white),
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              name,
+                              style: const TextStyle(
+                                  color: Colors.white, fontSize: 17),
+                            ),
+                            const SizedBox(height: 10),
+                            Container(
+                              decoration:BoxDecoration(
+                                color: Colors.amber,
+                                borderRadius: BorderRadius.circular(15)
+                              ),
+                              child: const Center(
+                                  child: Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 20,vertical: 8),
+                                child: Text("Rimbush",style: TextStyle(color: Colors.white),),
+                              )),
+                            )
+                          ],
                         ),
-                        Text(
-                          "24.00$credit",
-                          style: const TextStyle(
-                              fontSize: 20, color: Colors.white),
+                        QrImageView(
+                          data: qrCode,
+                          version: QrVersions.auto,
+                          size: 110,
+                          foregroundColor: Colors.white,
                         ),
-                        SizedBox(height: 20),
-                        Text(
-                          name,
-                          style: const TextStyle(color: Colors.white, fontSize: 17),
+                        // Text(credit.toString())
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 20),
+              child: Text(
+                "Abonimet",
+                style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
+              ),
+            ),
+            SizedBox(
+              height: getPhoneHeight(context)*0.38,
+              width: getPhoneWidth(context),
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: subscriptions.length,
+                physics: ClampingScrollPhysics(),
+                itemBuilder: (BuildContext context, int index){
+                  final isLastItem = index == subscriptions.length - 1;
+                  return Container(
+                    height: getPhoneHeight(context),
+                    width: getPhoneWidth(context)*0.55,
+                    margin: const EdgeInsets.symmetric(horizontal: 10),
+                    decoration: BoxDecoration(
+                      color: subscriptions[index]['color'],
+                      borderRadius: BorderRadius.circular(10)
+                    ),
+                    child: Stack(
+                      children: [
+                        isLastItem?Stack(
+                          children: [
+                            Positioned(
+                              top:-15,
+                              left: -30,
+                              child: Container(
+                                height: 80,
+                                width: 80,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.white.withOpacity(0.3)
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              bottom:-10,
+                              right: -20,
+                              child: Container(
+                                height: 80,
+                                width: 80,
+                                decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.white.withOpacity(0.3)
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              top:-10,
+                              right: -20,
+                              child: Container(
+                                height: 40,
+                                width: 40,
+                                decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.white.withOpacity(0.3)
+                                ),
+                              ),
+                            )
+                          ],
+                        ):const SizedBox(),
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical:getPhoneHeight(context)*0.03 ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(Icons.attach_money_outlined,color: Colors.white,),
+                                  Text("Paketa ${subscriptions[index]['name']}",style: TextStyle(color: Colors.white,fontSize: 18,fontWeight:FontWeight.w500),)
+                                ],
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  if (subscriptions[index]['features'] != null)
+                                    for (var feature in subscriptions[index]['features']!)
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(vertical: 4.0),
+                                        child: Text(
+                                          '- $feature',
+                                          style: TextStyle(color: Colors.white,fontSize: 16),
+                                        ),
+                                      ),
+                                ],
+                              ),
+                              Center(
+                                child: Text(
+                                  '${subscriptions[index]['price'].toString()} €',style: TextStyle(fontSize: 18,color: Colors.white,fontWeight: FontWeight.w600),),
+                              )
+                            ],
+                          ),
                         ),
                       ],
                     ),
-                    QrImageView(
-                      data: qrCode,
-                      version: QrVersions.auto,
-                      size: 110,
-                      foregroundColor: Colors.white,
-                    ),
-                    // Text(credit.toString())
-                  ],
-                ),
+                  );
+                },
               ),
             ),
             const Padding(

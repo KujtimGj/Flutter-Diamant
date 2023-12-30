@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:warcash/features/presentation/auth/loginstaff.dart';
-import '../../const.dart';
+import '../consts/const.dart';
 import '../consts/dimensions.dart';
 import 'failure_strings.dart';
 import 'package:flutter/material.dart';

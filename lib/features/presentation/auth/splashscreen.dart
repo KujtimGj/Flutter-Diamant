@@ -17,7 +17,7 @@ class SplashScreen extends StatelessWidget {
               Container(
                 height: size.height * 0.6,
                 width: size.width,
-                child: Image.asset("assets/dcw.png"),
+                child: Image.asset("assets/images/dcw.png"),
               ),
               SizedBox(height: size.height * 0.1),
               GestureDetector(

@@ -7,17 +7,22 @@ import 'package:warcash/features/presentation/auth/splashscreen.dart';
 import 'package:warcash/features/presentation/admin/admin.dart';
 import 'package:warcash/features/presentation/client/client.dart';
 import 'package:warcash/features/presentation/staff/staff.dart';
-import 'package:warcash/features/providers/StaffAuthProviders/staffAuth.dart';
+import 'package:warcash/features/presentation/staff/stats.dart';
+import 'package:warcash/features/providers/ClientAuthProvider.dart';
+import 'package:warcash/features/providers/SlotProvider.dart';
+import 'package:warcash/features/providers/StaffAuthProvider.dart';
+import 'package:warcash/features/providers/getProvider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Ensure Flutter is initialized.
   SharedPreferences prefs = await SharedPreferences.getInstance();
   var isLoggedIn = prefs.getBool("isLoggedIn") ?? false; // Use
-  var getRole = prefs.getInt('role') ?? 1; // null-aware operator.
+  var getRole = prefs.getInt('role') ?? 0; // null-aware operator.
   runApp(MyApp(
     isLoggedIn: isLoggedIn,
     role: getRole,
   ));
+  print(getRole);
 }
 
 class MyApp extends StatefulWidget {
@@ -32,6 +37,22 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => StaffAuthProvider(),child:const LoginStaff(),),
+        ChangeNotifierProvider(create: (_)=> ClientAuthProvider(), child: const Login(),),
+        ChangeNotifierProvider(create: (_)=>SlotProvider(),child: Stats()),
+        ChangeNotifierProvider(create: (_)=> GetProvider())
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: getHomePage(),
+      ),
+    );
+  }
   Widget getHomePage() {
     if (widget.isLoggedIn) {
       if (widget.role == 1) {
@@ -46,16 +67,5 @@ class _MyAppState extends State<MyApp> {
     } else {
       return const SplashScreen();
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => StaffAuthProvider(),child:const LoginStaff(),)],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: getHomePage(),
-      ),
-    );
   }
 }

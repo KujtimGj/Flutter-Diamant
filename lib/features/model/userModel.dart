@@ -7,8 +7,7 @@ class User{
 
   User({required this.userName,required this.email, required this.password, required this.qrCode,required this.subscription,required this.phone, required this.role, required this.credit, required this.id });
 
-  factory User.fromJson(Map<String, dynamic>fromJson){
-  return User(
+  factory User.fromJson(Map<String, dynamic>fromJson)=>User(
       userName: fromJson['userName'],
       email: fromJson['email'],
       password: fromJson['password'],
@@ -20,5 +19,3 @@ class User{
     id: M.ObjectId.fromHexString(fromJson['_id']),
   );
   }
-
-}

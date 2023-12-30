@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:warcash/features/presentation/auth/login.dart';
 import 'package:http/http.dart' as http;
-import 'package:warcash/const.dart';
+import 'package:warcash/core/consts/const.dart';
 
 import '../../model/completedServicesModel.dart';
 

@@ -2,10 +2,12 @@ import 'dart:developer';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
-import 'package:warcash/const.dart';
+import 'package:warcash/core/consts/const.dart';
+import 'package:warcash/features/model/adminModel.dart';
 import 'package:warcash/features/model/staffModel.dart';
+import 'package:warcash/features/presentation/admin/admin.dart';
 import 'package:warcash/features/presentation/staff/staff.dart';
-import 'package:warcash/features/providers/StaffAuthProviders/staffAuth.dart';
+import 'package:warcash/features/providers/StaffAuthProvider.dart';
 import 'package:provider/provider.dart';
 class LoginStaff extends StatefulWidget {
   const LoginStaff({Key? key}) : super(key: key);
@@ -30,14 +32,32 @@ class _LoginStaffState extends State<LoginStaff> {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if(staffModel != null){
-      print(staffModel);
       Navigator.push(context, MaterialPageRoute(builder: (_)=>const Staff()));
       setState(() {
-        uuid=prefs.getString("uuid");
+        uuid=prefs.getString("_id");
       });
     }else{
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Login failed. Please check your credentials'),backgroundColor: Colors.red,)
+      );
+    }
+  }
+
+  loginAdmin(StaffAuthProvider adminProvider) async{
+    String email = _email.text.trim();
+    String password = _password.text.trim();
+
+    AdminModel? adminModel = await adminProvider.loginAdmin(email, password);
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if(adminModel != null){
+      Navigator.push(context, MaterialPageRoute(builder: (_)=>const Admin()));
+      setState(() {
+        uuid=prefs.getString("_id");
+      });
+    }else{
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Login failed. Please check your credentials'),backgroundColor: Colors.red,)
       );
     }
   }
@@ -187,7 +207,7 @@ class _LoginStaffState extends State<LoginStaff> {
               SizedBox(height: size.height * 0.06),
               GestureDetector(
                   onTap: () async {
-                    await loginStaff(staffProvider);
+                    isStaff?await loginStaff(staffProvider): await loginAdmin(staffProvider);
                   },
                   child: Align(
                     alignment: Alignment.centerRight,

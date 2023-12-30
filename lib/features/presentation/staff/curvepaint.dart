@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/consts/const.dart';
+
 class CurvePainterWidget extends StatelessWidget {
   const CurvePainterWidget({super.key});
 
@@ -14,7 +16,7 @@ class CurvePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     var paint = Paint();
-    paint.color = Colors.grey[600]!;
+    paint.color =primaryBlue;
     paint.style = PaintingStyle.stroke; // Change this to fill
     paint.strokeWidth = 2;
 

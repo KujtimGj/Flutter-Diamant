@@ -1,13 +1,16 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
-import 'package:warcash/const.dart';
+import 'package:warcash/core/consts/const.dart';
+import 'package:warcash/features/model/userModel.dart';
 import 'package:warcash/features/presentation/admin/admin.dart';
 import 'package:warcash/features/presentation/client/client.dart';
 import 'package:http/http.dart' as http;
 import 'package:warcash/features/presentation/staff/staff.dart';
+import 'package:warcash/features/providers/ClientAuthProvider.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -20,100 +23,36 @@ class _LoginState extends State<Login> {
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
   String secretKey = 'K0s0v@r3Publik';
-
+  String? uuid;
   DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
 
-  Future<void> login(context) async {
-    var headers={'Content-Type': 'application/json'};
-    try {
-      print("try");
-      var uri = Uri.parse("https://testdiamondapi.onrender.com/users/login");
-      var res = await http.post(
-        uri,
-        headers: headers,
-        body: jsonEncode(<String, String>{
-          'email': _email.text,
-          'password': _password.text
-        }),
-      ).timeout(Duration(seconds: 10)); // Set an appropriate timeout duration
+  Future<void> loginClient(ClientAuthProvider clientAuthProvider) async {
+    String email = _email.text.trim();
+    String password = _password.text.trim();
 
-      print(uri);
-      print("try done");
+    User? client = await clientAuthProvider.loginClient(email, password);
 
-      var resBody = jsonDecode(res.body);
-      print(resBody);
-      SharedPreferences localStorage = await SharedPreferences.getInstance();
-
-      if (res.statusCode == 200) {
-        print("status code 200 accepted");
-        if (resBody['token'] != "" && resBody['token'] != null) {
-          log(resBody['token']);
-          localStorage.setString("token", resBody['token']);
-          localStorage.setString("id", resBody['user']['_id']);
-          localStorage.setBool("isLoggedIn", true);
-          localStorage.setString("userName", resBody['user']['userName']);
-          localStorage.setInt("credit", resBody['user']['credit']);
-          localStorage.setInt("role", resBody['user']['role']);
-          if(resBody['user']['role']==1){
-            print("role 1");
-            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_)=>const Admin()), (route) => false);
-          }
-          if (resBody['user']['role'] == 2) {
-            print("role 2");
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (_) => const Staff()),
-                  (route) => false,
-            );
-          } else if (resBody['user']['role'] == 3) {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (_) => const Client()),
-                  (route) => false,
-            );
-          }
-        } else {
-          showErrorMessage(context, "Unexpected response from server");
-        }
-      } else {
-        handleErrorResponse(context, resBody);
-      }
-    } catch (e) {
-      print("Error during login: $e");
-      showErrorMessage(context, "Error during login. Please try again.");
-    }
-  }
-
-  void showErrorMessage(BuildContext context, String message) {
-    final snackBar = SnackBar(
-      content: Text(message),
-    );
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
-
-  void handleErrorResponse(BuildContext context, Map<String, dynamic> resBody) {
-    if (resBody['error'] == 'Incorrect email') {
-      showErrorMessage(context, 'Incorrect email');
-    } else if (resBody['error'] == 'Incorrect password') {
-      showErrorMessage(context, 'Incorrect password');
-    } else if (resBody['error'] == 'All fields must be filled!') {
-      showErrorMessage(context, 'Please fill all fields!');
-    } else if (resBody['error'] == 'Please type in your email!') {
-      showErrorMessage(context, 'Please type in your email!');
-    } else if (resBody['error'] == 'Please type in your password!') {
-      showErrorMessage(context, 'Please type in your password!');
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (client != null) {
+      print('asd');
+      print(client);
+      print("Before navigation");
+      Navigator.push(context, MaterialPageRoute(builder: (_) => const Client()));
+      print("After navigation");
     } else {
-      showErrorMessage(context, 'Unexpected error occurred');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Login failed. Please check your credentials'), backgroundColor: Colors.red,),
+      );
     }
-
-    log(resBody.toString());
   }
+
 
   bool isObscure = true;
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    final clientAuthProvider = Provider.of<ClientAuthProvider>(context);
     return Scaffold(
       backgroundColor: primaryWhite,
       body: SafeArea(
@@ -205,9 +144,7 @@ class _LoginState extends State<Login> {
               SizedBox(height: size.height * 0.06),
               GestureDetector(
                   onTap: ()async {
-                    print("entry");
-                    await login(context);
-                    print("exit");
+                    await loginClient(clientAuthProvider);
                   },
                   child: Align(
                     alignment: Alignment.centerRight,
