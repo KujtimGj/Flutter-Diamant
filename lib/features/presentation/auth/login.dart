@@ -37,7 +37,7 @@ class _LoginState extends State<Login> {
       print('asd');
       print(client);
       print("Before navigation");
-      Navigator.push(context, MaterialPageRoute(builder: (_) => const Client()));
+      Navigator.push(context, MaterialPageRoute(builder: (_) => const Client2()));
       print("After navigation");
     } else {
       ScaffoldMessenger.of(context).showSnackBar(

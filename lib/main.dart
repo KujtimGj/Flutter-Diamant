@@ -60,7 +60,7 @@ class _MyAppState extends State<MyApp> {
       } else if (widget.role == 2) {
         return const Staff();
       } else if (widget.role == 3) {
-        return const Client();
+        return const Client2();
       } else {
         return const SplashScreen();
       }

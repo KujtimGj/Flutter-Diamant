@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:warcash/features/model/slotModel.dart';
 import 'package:warcash/features/presentation/staff/curvepaint.dart';
 import 'package:warcash/features/providers/SlotProvider.dart';
 import 'package:provider/provider.dart';
+import 'package:warcash/features/providers/StaffAuthProvider.dart';
 
 class Stats extends StatefulWidget {
   Stats({Key? key}) : super(key: key);
@@ -29,11 +31,22 @@ class _StatsState extends State<Stats> {
     }
   }
 
+  int? credit;
+  int? carswashed;
+  getUserData() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    setState(() {
+      credit = int.parse(localStorage.getInt('credit').toString());
+      carswashed = int.parse(localStorage.getInt('carswashed').toString());
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       getSlots();
+      getUserData();
     });
   }
 
@@ -44,6 +57,7 @@ class _StatsState extends State<Stats> {
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<StaffAuthProvider>(context);
     Size size = MediaQuery.of(context).size;
     final slotProvider = Provider.of<SlotProvider>(context);
     return Column(
@@ -59,9 +73,9 @@ class _StatsState extends State<Stats> {
           ),
         ),
         SizedBox(height: size.height * 0.03),
-        const Text(
-          "120",
-          style: TextStyle(
+        Text(
+          credit.toString(),
+          style:const TextStyle(
               color: Colors.black, fontSize: 26, fontWeight: FontWeight.w800),
         ),
         const Text(
@@ -69,9 +83,9 @@ class _StatsState extends State<Stats> {
           style: TextStyle(color: Colors.black, fontSize: 16),
         ),
         SizedBox(height: size.height * 0.1),
-        const Text(
-          "24",
-          style: TextStyle(
+        Text(
+          carswashed.toString(),
+          style:const TextStyle(
               color: Colors.black, fontSize: 26, fontWeight: FontWeight.w800),
         ),
         const Text(

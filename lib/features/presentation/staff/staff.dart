@@ -109,6 +109,7 @@ class _StaffState extends State<Staff> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: false,
+        automaticallyImplyLeading: false,
         actions: [
           GestureDetector(
             onTap: () {

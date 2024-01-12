@@ -35,7 +35,7 @@ class _BallinaState extends State<Ballina> {
 
   bool camOpen = false;
   String name = '';
-  int credits = 0;
+  int? credits = 0;
   String subscription = '';
   String email = '';
   String ClientID="";
@@ -75,6 +75,13 @@ class _BallinaState extends State<Ballina> {
           log('$response request successfully sent');
           log("$resBody sdaddasds");
           log(ClientID);
+          setState(() {
+            name="";
+            credits=null;
+            subscription="";
+            email="";
+            controller!.pauseCamera();
+          });
         } else {
           log('Response body is empty.');
         }
@@ -194,11 +201,6 @@ class _BallinaState extends State<Ballina> {
                                     color: Colors.black, fontSize: 23),
                                 textAlign: TextAlign.center,
                               ),
-                              // Text(
-                              //   "Barcode Type: ${describeEnum(result!.format)}",
-                              //   style: TextStyle(
-                              //       color: Colors.grey[600], fontSize: 16),
-                              // )
                             ],
                           )
                         : const Text(
@@ -239,7 +241,7 @@ class _BallinaState extends State<Ballina> {
                           style: TextStyle(color: Colors.grey[700]),
                         ),
                         Text(
-                          credits.toString(),
+                          credits!=null?credits.toString():'',
                           style: const TextStyle(
                               color: Colors.black, fontSize: 21),
                         )

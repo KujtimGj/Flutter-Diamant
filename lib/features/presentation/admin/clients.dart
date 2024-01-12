@@ -13,7 +13,6 @@ class Clients extends StatefulWidget {
 
 class _ClientsState extends State<Clients> {
 
-
   bool isFetching = false;
 
   getClients()async{
@@ -38,13 +37,16 @@ class _ClientsState extends State<Clients> {
 
   @override
   Widget build(BuildContext context) {
+    final clntProvider = Provider.of<GetProvider>(context);
     return Container(
-      height: getPhoneHeight(context),
       width: getPhoneWidth(context),
       margin: EdgeInsets.only(top: getPhoneHeight(context)*0.05),
       child: ListView.builder(
-        itemCount: 6,
+        shrinkWrap: true,
+        itemCount: clntProvider.getClients().length,
+        physics: const NeverScrollableScrollPhysics(),
         itemBuilder: (BuildContext context, int index){
+          print(clntProvider.getClients().length);
           return Container(
             height: 80,
             width: getPhoneWidth(context),
@@ -59,6 +61,23 @@ class _ClientsState extends State<Clients> {
                       Color(0xfff8646c)
                     ]
                 )
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment:CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(clntProvider.getClients()[index].userName,style: const TextStyle(fontSize: 17,fontWeight: FontWeight.w500,color: Colors.white),),
+                      Text(clntProvider.getClients()[index].subscription,style: TextStyle(fontSize: 17,fontWeight: FontWeight.w500,color: Colors.grey[300]),)
+                    ],
+                  ),
+                  Text('${clntProvider.getClients()[index].credit} credits',style:const TextStyle(color: Colors.white,fontSize: 17,fontWeight: FontWeight.w500),)
+                ],
+              ),
             ),
           );
         },

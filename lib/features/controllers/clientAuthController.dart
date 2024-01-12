@@ -23,14 +23,14 @@ class ClientAuthController {
         if (resBody != null && resBody['token'].isNotEmpty && resBody['token'] != null) {
           print(resBody['token']);
           prefs.setString("token", resBody['token']);
-          prefs.setString("id", resBody['user']['_id']);
+          prefs.setString("id", resBody['client']['_id']);
           prefs.setBool("isLoggedIn", true);
-          prefs.setString("userName", resBody['user']['userName']);
-          prefs.setString('qrCode',resBody['user']['qrCode']);
-          prefs.setInt("credit", resBody['user']['credit']);
-          prefs.setInt("role", resBody['user']['role']);
-          print(resBody['user']['qrCode']);
-          var clientModel = User.fromJson(resBody['user']);
+          prefs.setString("userName", resBody['client']['userName']);
+          prefs.setString('qrCode',resBody['client']['qrCode']);
+          prefs.setInt("credit", resBody['client']['credit']);
+          prefs.setInt("role", resBody['client']['role']);
+          print(resBody['client']['qrCode']);
+          var clientModel = User.fromJson(resBody['client']);
           return Right(clientModel);
         } else {
           return Left(ServerFailure());

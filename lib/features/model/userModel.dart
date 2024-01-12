@@ -18,4 +18,16 @@ class User{
       credit: fromJson['credit'],
     id: M.ObjectId.fromHexString(fromJson['_id']),
   );
+
+  Map<String, dynamic> toJson()=>{
+    'userName':userName,
+    'email':email,
+    'password':password,
+    'qrCode':qrCode,
+    'subscription':subscription,
+    'phone':phone,
+    'role':role,
+    'credit':credit,
+    'id':id
+    };
   }

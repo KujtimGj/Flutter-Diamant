@@ -21,6 +21,7 @@ class StaffAuthProvider extends ChangeNotifier {
   }
 
   Future<StaffModel?> login(String email, String password) async {
+    print("u hi nprovider");
     if (authController == null) {
       print("Login controller is null. Cannot perform login");
       return null;
@@ -28,6 +29,8 @@ class StaffAuthProvider extends ChangeNotifier {
     print(email);
 
     var result = await authController!.loginStaff(email, password);
+
+    print("e ka kalu controllerin");
 
     return result.fold((failure) {
       print("Login failed: $failure");
@@ -41,7 +44,9 @@ class StaffAuthProvider extends ChangeNotifier {
           role: staff.role,
           phone: staff.phone,
           staffCredit: staff.staffCredit,
-          slotNr: staff.slotNr);
+          slotNr: staff.slotNr,
+          carswashed: staff.carswashed
+      );
       print(_staff);
       return _staff;
     });

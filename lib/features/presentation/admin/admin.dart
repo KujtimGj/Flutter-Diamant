@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:warcash/features/presentation/auth/login.dart';
 import 'package:warcash/features/presentation/admin/clients.dart';
 import 'package:warcash/features/presentation/admin/employees.dart';
-import 'package:warcash/features/presentation/admin/profile.dart';
+import 'package:warcash/features/presentation/admin/servicesByStaff.dart';
 import 'package:warcash/features/presentation/auth/splashscreen.dart';
 import 'package:warcash/features/presentation/client/client.dart';
 
@@ -98,11 +98,11 @@ class _AdminState extends State<Admin> {
                   height: 40,
                   width: 100,
                   decoration: BoxDecoration(
-                      color: selectedIndex==2?Color(0xff999bf0):Colors.white,
+                      color: selectedIndex==2?const Color(0xff999bf0):Colors.white,
                       borderRadius: BorderRadius.circular(15),
                   ),
                   child:  Center(
-                    child: Text("Profili",style: TextStyle(fontSize: 16,color: selectedIndex==2?Colors.white:Colors.black),),
+                    child: Text("Historia",style: TextStyle(fontSize: 16,color: selectedIndex==2?Colors.white:Colors.black),),
                   ),
                 ),
               )
@@ -113,17 +113,10 @@ class _AdminState extends State<Admin> {
           ]else if(selectedIndex==1)...[
             const Clients()
           ]else...[
-            const AdminProfile()
+            const ServicesByStaff()
           ],
           SizedBox(height: size.height*0.05),
-          GestureDetector(
-            onTap: (){
-              logout();
-            },
-            child: const Center(
-              child: Text("Sign Out",style: TextStyle(fontSize: 20,color: Colors.red,fontWeight: FontWeight.w500),),
-            ),
-          )
+
         ],
       ),
     );

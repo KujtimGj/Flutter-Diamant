@@ -22,11 +22,13 @@ class StaffAuthController {
       var url = Uri.parse('$host$staffLogin');
       print(url);
       var data = {"email": email, "password": password};
+      print("pre-response");
       var response =
           await http.post(url, headers: headers, body: jsonEncode(data));
       var resBody = jsonDecode(response.body);
       print(resBody);
       if (response.statusCode == 200) {
+        print("Test");
         if (resBody['token'].isNotEmpty && resBody['token'] != null) {
           print(resBody['token']);
           prefs.setString("token", resBody['token']);
@@ -35,7 +37,7 @@ class StaffAuthController {
           prefs.setString("userName", resBody['staff']['userName']);
           prefs.setInt("credit", resBody['staff']['staffCredit']);
           prefs.setInt("role", resBody['staff']['role']);
-
+          prefs.setInt("carswashed", resBody['staff']['carswashed']);
           var staffModel = StaffModel.fromJson(resBody['staff']);
           return Right(staffModel);
         }
@@ -79,7 +81,7 @@ class StaffAuthController {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     try{
-      var url = Uri.parse('$adminLogin');
+      var url = Uri.parse(adminLogin);
       var data = {"email": email, "password": password};
       var response = await http.post(url, headers: headers, body: jsonEncode(data));
       var resBody = jsonDecode(response.body);
